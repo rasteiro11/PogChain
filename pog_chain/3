@@ -1,0 +1,27 @@
+use std::collections::LinkedList;
+
+use crate::block::block::Block;
+
+trait IBlockChain {
+    fn add_block(&mut self, block: Block);
+}
+
+pub struct BlockChain {
+    // immutable ledger
+    // we are not able to remove blocks
+    block_chain: LinkedList<Block>,
+}
+
+impl BlockChain {
+    fn new() -> BlockChain {
+        BlockChain {
+            block_chain: LinkedList::new(),
+        }
+    }
+}
+
+impl IBlockChain for BlockChain {
+    fn add_block(&mut self, block: Block) {
+        self.block_chain.push_back(block);
+    }
+}
