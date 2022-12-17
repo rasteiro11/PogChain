@@ -25,7 +25,6 @@ mod tests {
     #[test]
     fn test_hash() {
         let hash = SHA256::hash("Hello world!");
-        println!("{}", hash);
         assert_eq!(
             "C0535E4BE2B79FFD93291305436BF889314E4A3FAEC05ECFFCBB7DF31AD9E51A",
             hash
