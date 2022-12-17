@@ -41,6 +41,7 @@ impl ToString for dyn IBlockChain {
         let mut s = String::new();
         for block in self.get_block_chain() {
             s.push_str(block.to_string().clone().as_str());
+            s.push_str("\n");
         }
         s
     }

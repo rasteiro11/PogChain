@@ -4,7 +4,7 @@ use config::config::{Config, EnvConfig};
 use crypto::crypto::SHA256;
 use miner::miner::{IMiner, Miner};
 
-use crate::crypto::crypto::Hasher;
+use crate::{block_chain::block_chain::IBlockChain, crypto::crypto::Hasher};
 
 mod block;
 mod block_chain;
@@ -13,19 +13,7 @@ mod crypto;
 mod miner;
 
 fn main() {
-    // let hasher = SHA256::new();
-
-    //for i in 0..100 {
-    //    println!("{}", SHA256::hash(i.to_string()));
-    //}
-
-    let s = "test";
-    let string = "test".to_string();
-
-    println!("EQUAL: {}", s == string.get(0..).unwrap());
-
     let config = EnvConfig::new(".env").unwrap();
-    println!("CONFIG OK");
     println!(
         "{}{}{}",
         config.get_reward(),
@@ -33,14 +21,30 @@ fn main() {
         config.get_genesis_prev_hash()
     );
 
-    let block = Block::new(420, "MUITO CARO".into(), config.get_genesis_prev_hash());
-    println!("BLOCK OK");
     let mut block_chain = BlockChain::new();
-    println!("BLOCK CHAIN OK");
+    let mut miner = Miner::new();
 
-    let miner = Miner::new();
-    println!("MINER OK");
+    let block0 = Block::new(0, "".into(), config.get_genesis_prev_hash());
+    miner.mine(Box::new(block0), &mut block_chain);
 
-    miner.mine(Box::new(block), &mut block_chain);
-    //miner.is_golden_hash(&block);
+    let block1 = Block::new(
+        1,
+        "transaction1".into(),
+        block_chain.get_block_chain().back().unwrap().get_hash(),
+    );
+    miner.mine(Box::new(block1), &mut block_chain);
+
+    let block2 = Block::new(
+        2,
+        "transaction2".into(),
+        block_chain.get_block_chain().back().unwrap().get_hash(),
+    );
+    miner.mine(Box::new(block2), &mut block_chain);
+
+    println!(
+        "BLOCKCHAIN {}",
+        (&block_chain as &dyn IBlockChain).to_string()
+    );
+
+    println!("REWARD: {}", miner.get_reward());
 }

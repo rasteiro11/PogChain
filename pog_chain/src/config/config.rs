@@ -44,7 +44,6 @@ impl EnvConfig {
                 "Could not parse DIFFICULTY to u64".to_string(),
             )));
         }
-        let difficulty = difficulty.unwrap();
 
         let reward = env::var("REWARD");
         if let Err(e) = path {
@@ -56,7 +55,6 @@ impl EnvConfig {
                 "Could not parse REWARD to u64".to_string(),
             )));
         }
-        let reward = reward.unwrap();
 
         let genesis_prev_hash = env::var("GENESIS_PREV_HASH");
         if let Err(e) = path {
@@ -64,12 +62,11 @@ impl EnvConfig {
                 "Could not get GENESIS_PREV_HASH".to_string(),
             )));
         }
-        let genesis_prev_hash = genesis_prev_hash.unwrap();
 
         Ok(EnvConfig {
-            difficulty,
-            reward,
-            genesis_prev_hash,
+            difficulty: difficulty.unwrap(),
+            reward: reward.unwrap(),
+            genesis_prev_hash: genesis_prev_hash.unwrap(),
         })
     }
 }
