@@ -1,21 +1,21 @@
-use std::collections::LinkedList;
+use std::{borrow::Borrow, collections::LinkedList};
 
-use crate::block::block::Block;
+use crate::block::block::IBlock;
 
-trait IBlockChain {
-    fn add_block(&mut self, block: Block);
+pub trait IBlockChain {
+    fn add_block(&mut self, block: Box<dyn IBlock>);
+    fn get_block_chain(&self) -> &LinkedList<Box<dyn IBlock>>;
     fn get_size(&self) -> usize;
-    fn get_block_chain(&self) -> &LinkedList<Block>;
 }
 
 pub struct BlockChain {
     // immutable ledger
     // we are not able to remove blocks
-    block_chain: LinkedList<Block>,
+    block_chain: LinkedList<Box<dyn IBlock>>,
 }
 
 impl BlockChain {
-    fn new() -> BlockChain {
+    pub fn new() -> Self {
         BlockChain {
             block_chain: LinkedList::new(),
         }
@@ -23,7 +23,7 @@ impl BlockChain {
 }
 
 impl IBlockChain for BlockChain {
-    fn add_block(&mut self, block: Block) {
+    fn add_block(&mut self, block: Box<dyn IBlock>) {
         self.block_chain.push_back(block);
     }
 
@@ -31,7 +31,7 @@ impl IBlockChain for BlockChain {
         self.block_chain.len()
     }
 
-    fn get_block_chain(&self) -> &LinkedList<Block> {
+    fn get_block_chain(&self) -> &LinkedList<Box<dyn IBlock>> {
         &self.block_chain
     }
 }
@@ -40,7 +40,7 @@ impl ToString for dyn IBlockChain {
     fn to_string(&self) -> String {
         let mut s = String::new();
         for block in self.get_block_chain() {
-            s.push_str(block.to_string().as_str())
+            s.push_str(block.to_string().clone().as_str());
         }
         s
     }
