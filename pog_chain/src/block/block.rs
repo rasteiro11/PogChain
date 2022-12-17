@@ -43,9 +43,7 @@ impl Block {
 
 impl IBlock for Block {
     fn increment_nonce(&mut self) {
-        println!("BEFORE INCREMENTE");
-        self.id += 1;
-        println!("INCREMENTED");
+        self.nonce += 1;
     }
 
     fn get_prev_hash(&self) -> String {
@@ -84,6 +82,11 @@ impl IBlock for Block {
 
 impl ToString for dyn IBlock {
     fn to_string(&self) -> String {
-        format!("{}{}", self.get_id().to_string(), self.get_prev_hash(),)
+        format!(
+            "ID: {}\n PREV HASH: {}\n HASH: {}\n",
+            self.get_id().to_string(),
+            self.get_prev_hash(),
+            self.get_hash()
+        )
     }
 }

@@ -8,7 +8,7 @@ use crate::{
 
 pub trait IMiner {
     fn get_reward(&self) -> u64;
-    fn mine(&self, block: Box<dyn IBlock>, block_chain: &mut dyn IBlockChain);
+    fn mine(&mut self, block: Box<dyn IBlock>, block_chain: &mut dyn IBlockChain);
     fn is_golden_hash(&self, block: &dyn IBlock) -> bool;
 }
 
@@ -21,7 +21,7 @@ impl Miner {
     pub fn new() -> Self {
         let config = EnvConfig::new(".env").unwrap();
         Miner {
-            reward: config.get_reward(),
+            reward: 0,
             config: Box::new(config),
         }
     }
@@ -32,7 +32,7 @@ impl IMiner for Miner {
         return self.reward;
     }
 
-    fn mine(&self, mut block: Box<dyn IBlock>, block_chain: &mut dyn IBlockChain) {
+    fn mine(&mut self, mut block: Box<dyn IBlock>, block_chain: &mut dyn IBlockChain) {
         while !self.is_golden_hash(block.borrow()) {
             block.increment_nonce();
             block.generate_hash();
@@ -42,6 +42,7 @@ impl IMiner for Miner {
         println!("Hash is {}", block.get_hash());
 
         block_chain.add_block(block);
+        self.reward += self.config.get_reward();
     }
 
     fn is_golden_hash(&self, block: &dyn IBlock) -> bool {
