@@ -11,13 +11,13 @@ impl Display for LoadFileError {
     }
 }
 
-trait Config {
+pub trait Config {
     fn get_difficulty(&self) -> u64;
     fn get_reward(&self) -> u64;
     fn get_genesis_prev_hash(&self) -> String;
 }
 
-struct EnvConfig {
+pub struct EnvConfig {
     difficulty: u64,
     reward: u64,
     genesis_prev_hash: String,
