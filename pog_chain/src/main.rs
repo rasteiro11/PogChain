@@ -10,8 +10,10 @@ mod block;
 mod block_chain;
 mod config;
 mod crypto;
+mod elliptic_curve_crypto;
 mod merkle_tree;
 mod miner;
+mod transaction;
 
 fn main() {
     //let config = EnvConfig::new(".env").unwrap();
