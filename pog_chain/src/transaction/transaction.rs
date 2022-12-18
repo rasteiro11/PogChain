@@ -19,7 +19,8 @@ use super::{
     transaction_output::TransactionOutput,
 };
 
-struct Transaction {
+#[derive(Debug)]
+pub struct Transaction {
     sender: PublicKey,
     receiver: PublicKey,
     amount: f64,
@@ -112,7 +113,7 @@ impl Transaction {
             false
         }
     }
-    fn calculate_hash(&mut self) {
+    pub fn calculate_hash(&mut self) {
         let hash_data = format!(
             "{}{}{}",
             String::from_utf8_lossy(self.sender.as_ref().to_bytes().as_ref()),
@@ -120,5 +121,16 @@ impl Transaction {
             self.amount.to_string()
         );
         self.transaction_id = hash_data;
+    }
+}
+
+impl ToString for Transaction {
+    fn to_string(&self) -> String {
+        format!(
+            "{}{}{}",
+            String::from_utf8_lossy(self.sender.as_ref().to_bytes().as_ref()),
+            String::from_utf8_lossy(self.receiver.as_ref().to_bytes().as_ref()),
+            self.amount.to_string()
+        )
     }
 }

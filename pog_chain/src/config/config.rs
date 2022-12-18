@@ -1,5 +1,8 @@
 use std::{env, error::Error, fmt::Display, path::Path};
 
+pub static CONFIG: EnvConfig =
+    EnvConfig::new(".env").expect("Something went wrong during configuration load");
+
 #[derive(Debug)]
 struct LoadFileError(String);
 

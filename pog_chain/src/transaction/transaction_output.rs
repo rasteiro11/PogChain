@@ -3,6 +3,7 @@ use p256::PublicKey;
 
 use crate::crypto::crypto::{Hasher, SHA256};
 
+#[derive(Debug)]
 pub struct TransactionOutput {
     id: String,
     parent_transaction_id: String,
