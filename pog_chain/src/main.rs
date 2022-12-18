@@ -14,6 +14,7 @@ mod elliptic_curve_crypto;
 mod merkle_tree;
 mod miner;
 mod transaction;
+mod wallet;
 
 fn main() {
     //let config = EnvConfig::new(".env").unwrap();

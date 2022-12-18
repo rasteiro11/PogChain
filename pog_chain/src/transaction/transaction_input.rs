@@ -1,5 +1,6 @@
 use super::transaction_output::TransactionOutput;
 
+#[derive(Debug)]
 pub struct TransactionInput {
     transaction_output_id: String,
     utxo: Option<TransactionOutput>,

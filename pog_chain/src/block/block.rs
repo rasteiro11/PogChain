@@ -1,9 +1,14 @@
 use std::{
     fmt::Display,
     time::{SystemTime, UNIX_EPOCH},
+    vec,
 };
 
-use crate::crypto::crypto::{Hasher, SHA256};
+use crate::{
+    config::config::{Config, CONFIG},
+    crypto::crypto::{Hasher, SHA256},
+    transaction::transaction::Transaction,
+};
 
 pub trait IBlock {
     fn increment_nonce(&mut self);
@@ -13,6 +18,7 @@ pub trait IBlock {
     fn set_hash(&mut self, s: &String);
     fn generate_hash(&mut self);
     fn get_id(&self) -> i64;
+    fn add_transaction(&mut self, transaction: &Option<Transaction>) -> bool;
 }
 
 #[derive(Debug)]
@@ -22,13 +28,13 @@ pub struct Block {
     timestamp: i128,
     hash: String,
     previous_hash: String,
-    transaction: String,
+    transactions: Vec<Transaction>,
 }
 
 impl Block {
-    pub fn new(id: i64, transaction: String, previous_hash: String) -> Self {
-        Block {
-            id,
+    pub fn new(previous_hash: String) -> Self {
+        let block = Block {
+            id: 0,
             nonce: 0,
             timestamp: SystemTime::now()
                 .duration_since(UNIX_EPOCH)
@@ -36,12 +42,33 @@ impl Block {
                 .as_millis() as i128,
             hash: "".to_string(),
             previous_hash,
-            transaction,
-        }
+            transactions: vec![],
+        };
+        block.get_hash();
+        block
     }
 }
 
 impl IBlock for Block {
+    fn add_transaction(&mut self, transaction: &Option<Transaction>) -> bool {
+        if let None = transaction {
+            return false;
+        }
+
+        if !(self.previous_hash == CONFIG.get_genesis_prev_hash()) {
+            if let Some(t) = &transaction {
+                if !t.verify_transaction() {
+                    println!("Transaction is not valid...");
+                    return false;
+                }
+            }
+        }
+
+        self.transactions.push(transaction.unwrap());
+        println!("Transaction is valid and it's added to block {}", self.id);
+        true
+    }
+
     fn increment_nonce(&mut self) {
         self.nonce += 1;
     }
@@ -63,13 +90,17 @@ impl IBlock for Block {
     }
 
     fn generate_hash(&mut self) {
+        let transactions_hash = "".to_string();
+        for transaction in &self.transactions {
+            transactions_hash.push_str(transaction.to_string().as_str());
+        }
+
         let data = format!(
-            "{}{}{}{}{}",
+            "{}{}{}{}",
             self.id.to_string(),
             self.previous_hash,
             self.timestamp.to_string(),
             self.nonce.to_string(),
-            self.transaction.to_string()
         );
 
         self.hash = SHA256::hash(data);

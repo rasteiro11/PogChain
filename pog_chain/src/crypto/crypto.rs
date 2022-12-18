@@ -20,7 +20,7 @@ impl SHA256 {
     }
 }
 
-struct KeyPair {
+pub struct KeyPair {
     public_key: PublicKey,
     private_key: SecretKey,
 }
@@ -35,6 +35,14 @@ impl KeyPair {
             public_key,
             private_key: secret,
         }
+    }
+
+    pub fn get_private_key(&self) -> SecretKey {
+        self.private_key
+    }
+
+    pub fn get_public_key(&self) -> PublicKey {
+        self.public_key
     }
 }
 
